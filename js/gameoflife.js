@@ -112,7 +112,29 @@ const iterate = (gameState, iterations) => {
     return iterateResult;
 };
 
-const main = (pattern, iterations) => {};
+const main = (pattern, iterations) => {
+    let startingPattern;
+    switch (pattern){
+        case 'rpentomino':
+            startingPattern = startPatterns.rpentomino;
+            break;
+        case 'glider':
+            startingPattern = startPatterns.glider;
+            break;
+        case 'square':
+            startingPattern = startPatterns.square;
+            break;
+        default:
+            throw new Error('Invalid start state');
+    };
+    const printNewLine = () => '\n';
+    const iterationsResult = iterate(startingPattern, iterations);
+    iterationsResult.forEach((gameState) => {
+        this.printCells(gameState);
+        printNewLine();
+    })
+
+};
 
 const startPatterns = {
     rpentomino: [
