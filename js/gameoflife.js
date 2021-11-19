@@ -82,7 +82,24 @@ const willBeAlive = (cell, gameState) => {
         return false;
 };
 
-const calculateNext = (state) => {};
+const calculateNext = (gameState) => {
+    const [bottomLeft, topRight] = corners(gameState);
+    const bottomLeftNew = [bottomLeft[0] - 1, bottomLeft[1] - 1];
+    const topRightNew = [topRight[0] + 1, topRight[1] + 1];
+    
+
+    const gameStateNew = [];
+    const rowCount = topRightNew[1] - bottomLeftNew[1] + 1;
+    const columnCount = topRightNew[0] - bottomLeftNew[0] + 1;
+    for (rowNumber = 0; rowNumber <= rowCount - 1; rowCount++)
+        for (columnNumber = 0; columnNumber <= columnCount - 1; columnCount++) {
+            const cellToTest = [bottomLeftNew[1] + rowNumber, bottomRight[0] + columnNumber];
+            const willBeAlive = this.willBeAlive(cellToTest, gameState);
+            if (willBeAlive === true)
+                gameStateNew.push(cellToTest);
+        }
+    return gameStateNew;
+};
 
 const iterate = (state, iterations) => {};
 
