@@ -57,7 +57,11 @@ const printCells = (gameState) => {
         
 };
 
-const getNeighborsOf = ([x, y]) => {};
+const getNeighborsOf = ([x, y]) => {
+    let result = [];
+    result.push([x - 1, y - 1], [x - 1, y], [x - 1, y + 1], [x + 1, y - 1], [x + 1, y], [x + 1, y + 1], [x, y + 1], [x, y - 1]);
+    return result;
+};
 
 const getLivingNeighbors = (cell, state) => {};
 
