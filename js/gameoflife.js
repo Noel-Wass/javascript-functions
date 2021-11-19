@@ -40,7 +40,21 @@ const corners = (gameState = []) => {
     
 };
 
-const printCells = (state) => {
+const printCells = (gameState) => {
+    const { bottomLeft, topRight } = corners(gameState);
+    const rowCount = topRight[1] - bottomLeft[1] + 1;
+    const columnCount = topRight[0] - bottomLeft[0] + 1;
+    const printSpace = () => '\u2000';
+    const printNewLine = () => '\n';
+    for (rowNumber = rowCount - 1; rowNumber >= 0; rowNumber--) {
+        for (columnNumber = 0; columnNumber <= columnCount - 1; columnCount++) {
+            const cellToTest = [bottomLeft[1] + rowNumber, bottomRight[0] + columnNumber];
+            printSpace();
+            printCell(cellToTest, gameState);           
+        }
+        printNewLine();
+    }
+        
 };
 
 const getNeighborsOf = ([x, y]) => {};
