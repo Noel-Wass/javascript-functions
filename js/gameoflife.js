@@ -1,4 +1,11 @@
-function seed() {}
+function seed() {
+    let i = 0; n = arguments.length, a = arguments;
+    const argumentsAsArray = [];
+    for (i = 0; i < n; i++) {
+        argumentsAsArray.push(a[i]);
+    }
+    return returnResult;
+}
 
 function same([x, y], [j, k]) {return (x === j) && (y === k)}
 
