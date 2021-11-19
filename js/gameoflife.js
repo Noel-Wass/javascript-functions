@@ -7,11 +7,20 @@ function contains(cell) {
     return this.some((c) => c.state === cell.state)
 }
 
-const printCell = (cell, state) => {};
+const printCell = (cell, stateThisArg) => {
+    //Remark: state is an array of cells; each cell is a 2D array of non-negative integers.
+    // The state must contain a cell to be alive.
+    const alive = this.contains.call(stateThisArg, cell);
+    if (alive)
+        return '\u25A3';
+    else
+        return '\u25A2';
+};
 
 const corners = (state = []) => {};
 
-const printCells = (state) => {};
+const printCells = (state) => {
+};
 
 const getNeighborsOf = ([x, y]) => {};
 
