@@ -70,7 +70,17 @@ const getLivingNeighbors = (cell, gameState) => {
     );    
 };
 
-const willBeAlive = (cell, state) => {};
+const willBeAlive = (cell, gameState) => {
+    const livingNeighbours = getLivingNeighbors(cell, gameState);
+    const livingNeighboursCount = livingNeighbours.length;
+    if (livingNeighboursCount === 3)
+        return true;
+    const isAlive = this.contains.call(gameState, cell);
+    if (isAlive && livingNeighboursCount === 2)
+        return true;
+    else
+        return false;
+};
 
 const calculateNext = (state) => {};
 
