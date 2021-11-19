@@ -63,7 +63,12 @@ const getNeighborsOf = ([x, y]) => {
     return result;
 };
 
-const getLivingNeighbors = (cell, state) => {};
+const getLivingNeighbors = (cell, gameState) => {
+    const neighbours = getNeighborsOf(cell);
+    return neighbours.filter(
+        this.contains.bind(neighbours, cell) && this.contains.bind(gameState, cell)
+    );    
+};
 
 const willBeAlive = (cell, state) => {};
 
