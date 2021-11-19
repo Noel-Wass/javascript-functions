@@ -19,7 +19,26 @@ const printCell = (cell, gameState) => {
         return '\u25A2';
 };
 
-const corners = (state = []) => {};
+const corners = (gameState = []) => {
+    let topRight = [0, 0] //topRight cell
+    let bottomLeft = [0, 0] // bottomLeft cell
+    gameState.reduce((topRight, inputCell) => {
+        if (inputCell[0] > topRight[0])
+            topRight[0] = inputCell[0];
+        if (inputCell[1] > topRight[1])
+            topRight[1] = inputCell[1];
+    });
+    gameState.reduce((bottomLeft, inputCell) => {
+        if (inputCell[0] < bottomLeft[0])
+            bottomLeft[0] = inputCell[0];
+        if (inputCell[1] < bottomLeft[1])
+            bottomLeft[1] = inputCell[1];
+    });
+    return {
+        bottomLeft, topRight
+    };
+    
+};
 
 const printCells = (state) => {
 };
