@@ -101,7 +101,16 @@ const calculateNext = (gameState) => {
     return gameStateNew;
 };
 
-const iterate = (state, iterations) => {};
+const iterate = (gameState, iterations) => {
+    const iterateResult = [];
+    iterateResult.push(gameState);
+    while (iterations > 0) {
+        const nextGameState = calculateNext(gameState);
+        iterateResult.push(nextGameState);
+        iterations--;
+    }
+    return iterateResult;
+};
 
 const main = (pattern, iterations) => {};
 
