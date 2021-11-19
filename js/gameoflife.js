@@ -3,14 +3,16 @@ function seed() {}
 function same([x, y], [j, k]) {return (x === j) && (y === k)}
 
 // The game state to search for `cell` is passed as the `this` value of the function.
+//The game state is an array of cells that are alive at a given point in time.
 function contains(cell) {
     return this.some((c) => c.state === cell.state)
 }
 
-const printCell = (cell, stateThisArg) => {
+const printCell = (cell, gameState) => {
     //Remark: state is an array of cells; each cell is a 2D array of non-negative integers.
-    // The state must contain a cell to be alive.
-    const alive = this.contains.call(stateThisArg, cell);
+    // The gameState is passed as a parameter to the contains.call method because we are 
+    //checking that the cell belongs to a particular gameState.
+    const alive = this.contains.call(gameState, cell);
     if (alive)
         return '\u25A3';
     else
