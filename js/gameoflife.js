@@ -1,3 +1,10 @@
+const testCorners = () => {
+    const test = corners([[1, 2], [4, 1]]);
+    console.log(JSON.stringify(test));
+    //Should return {bottomLeft: [1,1], topRight:[4, 2]}
+}
+
+
 function seed() {
     let i = 0; n = arguments.length, a = arguments;
     const argumentsAsArray = [];
@@ -19,7 +26,7 @@ const printCell = (cell, gameState) => {
     //Remark: state is an array of cells; each cell is a 2D array of non-negative integers.
     // The gameState is passed as a parameter to the contains.call method because we are 
     //checking that the cell belongs to a particular gameState.
-    const alive = this.contains.call(gameState, cell);
+    const alive = contains.call(gameState, cell);
     if (alive)
         return '\u25A3';
     else
@@ -27,23 +34,29 @@ const printCell = (cell, gameState) => {
 };
 
 const corners = (gameState = []) => {
-    let topRight = [0, 0] //topRight cell
-    let bottomLeft = [0, 0] // bottomLeft cell
-    gameState.reduce((topRight, inputCell) => {
-        if (inputCell[0] > topRight[0])
-            topRight[0] = inputCell[0];
-        if (inputCell[1] > topRight[1])
-            topRight[1] = inputCell[1];
-    });
-    gameState.reduce((bottomLeft, inputCell) => {
-        if (inputCell[0] < bottomLeft[0])
-            bottomLeft[0] = inputCell[0];
-        if (inputCell[1] < bottomLeft[1])
-            bottomLeft[1] = inputCell[1];
-    });
-    return {
-        bottomLeft, topRight
+
+    if (gameState.length === 0)
+        return { bottomLeft: [0, 0], topRight: [0, 0]}
+    
+    const reducerTopRight = (topRight, inputCell) => {
+        const x = (inputCell[0] > topRight[0])  ? inputCell[0] : topRight[0];
+        const y = (inputCell[1] > topRight[1])  ? inputCell[1] : topRight[1];
+        return [x, y];
     };
+    const reducerTopRightResult = gameState.reduce(reducerTopRight);
+
+    const reducerBottomLeft = (bottomLeft, inputCell) => {
+        const x = (inputCell[0] < bottomLeft[0]) ? inputCell[0] : bottomLeft[0];
+        const y = (inputCell[1] < bottomLeft[1]) ? inputCell[1] : bottomLeft[1];
+        return [x, y];
+    };
+    const reducerBottomLeftResult = gameState.reduce(reducerBottomLeft);
+
+    const retVal =  {
+        bottomLeft: reducerBottomLeftResult, topRight: reducerTopRightResult
+    };
+    console.log(`retVal: ${JSON.stringify(retVal)}`);
+    return retVal;
     
 };
 
@@ -54,8 +67,8 @@ const printCells = (gameState) => {
     const printSpace = () => '\u2000';
     const printNewLine = () => '\n';
     for (rowNumber = rowCount - 1; rowNumber >= 0; rowNumber--) {
-        for (columnNumber = 0; columnNumber <= columnCount - 1; columnCount++) {
-            const cellToTest = [bottomLeft[1] + rowNumber, bottomRight[0] + columnNumber];
+        for (columnNumber = 0; columnNumber <= columnCount - 1; columnNumber++) {
+            const cellToTest = [bottomLeft[0] + columnNumber, bottomLeft[1] + rowNumber];
             printSpace();
             printCell(cellToTest, gameState);           
         }
@@ -72,17 +85,17 @@ const getNeighborsOf = ([x, y]) => {
 
 const getLivingNeighbors = (cell, gameState) => {
     const neighbours = getNeighborsOf(cell);
-    return neighbours.filter(
-        this.contains.bind(neighbours, cell) && this.contains.bind(gameState, cell)
-    );    
+    const fn_IsAlive = (cellAdjacent) => contains.bind(gameState, cellAdjacent);
+    return neighbours.filter(fn_IsAlive);
 };
 
 const willBeAlive = (cell, gameState) => {
     const livingNeighbours = getLivingNeighbors(cell, gameState);
     const livingNeighboursCount = livingNeighbours.length;
+    console.log(`livingNeighboursCount=${livingNeighboursCount}`);
     if (livingNeighboursCount === 3)
         return true;
-    const isAlive = this.contains.call(gameState, cell);
+    const isAlive = contains.call(gameState, cell);
     if (isAlive && livingNeighboursCount === 2)
         return true;
     else
@@ -90,7 +103,7 @@ const willBeAlive = (cell, gameState) => {
 };
 
 const calculateNext = (gameState) => {
-    const [bottomLeft, topRight] = corners(gameState);
+    const { bottomLeft, topRight } = corners(gameState);
     const bottomLeftNew = [bottomLeft[0] - 1, bottomLeft[1] - 1];
     const topRightNew = [topRight[0] + 1, topRight[1] + 1];
     
@@ -98,12 +111,16 @@ const calculateNext = (gameState) => {
     const gameStateNew = [];
     const rowCount = topRightNew[1] - bottomLeftNew[1] + 1;
     const columnCount = topRightNew[0] - bottomLeftNew[0] + 1;
-    for (rowNumber = 0; rowNumber <= rowCount - 1; rowCount++)
-        for (columnNumber = 0; columnNumber <= columnCount - 1; columnCount++) {
-            const cellToTest = [bottomLeftNew[1] + rowNumber, bottomRight[0] + columnNumber];
-            const willBeAlive = this.willBeAlive(cellToTest, gameState);
-            if (willBeAlive === true)
+    for (rowNumber = 0; rowNumber <= rowCount - 1; rowNumber++)
+        for (columnNumber = 0; columnNumber <= columnCount - 1; columnNumber++) {          
+            const cellToTest = [bottomLeftNew[0] + columnNumber, bottomLeftNew[1] + rowNumber];
+            const willBeAlive2 = willBeAlive(cellToTest, gameState);
+            console.log(`rowNumber:${rowNumber}, columnNumber:${columnNumber}, willbeAlive:${willBeAlive2}`)
+            if (willBeAlive2 === true) {
+                console.log(`cell pushed.`)
                 gameStateNew.push(cellToTest);
+            }
+                
         }
     return gameStateNew;
 };
@@ -120,6 +137,9 @@ const iterate = (gameState, iterations) => {
 };
 
 const main = (pattern, iterations) => {
+    console.log('entering main...')
+    console.log(`testCorners...`)
+    testCorners();
     let startingPattern;
     switch (pattern){
         case 'rpentomino':
@@ -133,11 +153,15 @@ const main = (pattern, iterations) => {
             break;
         default:
             throw new Error('Invalid start state');
+            break;
     };
     const printNewLine = () => '\n';
     const iterationsResult = iterate(startingPattern, iterations);
+    console.log(`iterationsResult[0]=${JSON.stringify(iterationsResult[0])}`);
+    console.log(`iterationsResult[1]=${JSON.stringify(iterationsResult[1])}`);
+    console.log(`iterationsResult[2]=${JSON.stringify(iterationsResult[2])}`);
     iterationsResult.forEach((gameState) => {
-        this.printCells(gameState);
+        printCells(gameState);
         printNewLine();
     })
 
