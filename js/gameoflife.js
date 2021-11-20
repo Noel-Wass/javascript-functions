@@ -1,7 +1,14 @@
 const testCorners = () => {
+    console.log(`testCorners...`)
     const test = corners([[1, 2], [4, 1]]);
     console.log(JSON.stringify(test));
     //Should return {bottomLeft: [1,1], topRight:[4, 2]}
+}
+
+const testPrintCells = () => {
+    console.log('testPrintCells: test')
+    console.log(printCells([[3, 2], [2, 3], [3, 3], [3, 4], [4, 4]]));
+    
 }
 
 
@@ -11,7 +18,7 @@ function seed() {
     for (i = 0; i < n; i++) {
         argumentsAsArray.push(a[i]);
     }
-    return returnResult;
+    return argumentsAsArray;
 }
 
 function same([x, y], [j, k]) {return (x === j) && (y === k)}
@@ -19,7 +26,7 @@ function same([x, y], [j, k]) {return (x === j) && (y === k)}
 // The game state to search for `cell` is passed as the `this` value of the function.
 //The game state is an array of cells that are alive at a given point in time.
 function contains(cell) {
-    return this.some((c) => c.state === cell.state)
+    return this.some((c) => same(c, cell) === true)
 }
 
 const printCell = (cell, gameState) => {
@@ -27,10 +34,16 @@ const printCell = (cell, gameState) => {
     // The gameState is passed as a parameter to the contains.call method because we are 
     //checking that the cell belongs to a particular gameState.
     const alive = contains.call(gameState, cell);
-    if (alive)
+    if (alive) {
+ 
         return '\u25A3';
-    else
+    }
+
+    else {
+
         return '\u25A2';
+    }
+        
 };
 
 const corners = (gameState = []) => {
@@ -55,7 +68,7 @@ const corners = (gameState = []) => {
     const retVal =  {
         bottomLeft: reducerBottomLeftResult, topRight: reducerTopRightResult
     };
-    console.log(`retVal: ${JSON.stringify(retVal)}`);
+   
     return retVal;
     
 };
@@ -66,14 +79,17 @@ const printCells = (gameState) => {
     const columnCount = topRight[0] - bottomLeft[0] + 1;
     const printSpace = () => '\u2000';
     const printNewLine = () => '\n';
-    for (rowNumber = rowCount - 1; rowNumber >= 0; rowNumber--) {
-        for (columnNumber = 0; columnNumber <= columnCount - 1; columnNumber++) {
+    const aChar = [];
+    for (let rowNumber = rowCount - 1; rowNumber >= 0; rowNumber--) {
+        for (let columnNumber = 0; columnNumber <= columnCount - 1; columnNumber++) {            
             const cellToTest = [bottomLeft[0] + columnNumber, bottomLeft[1] + rowNumber];
-            printSpace();
-            printCell(cellToTest, gameState);           
+            aChar.push(printSpace());
+            aChar.push(printCell(cellToTest, gameState));           
         }
-        printNewLine();
+        aChar.push(printNewLine());
     }
+    strRep = aChar.join("");
+    return strRep;
         
 };
 
@@ -85,14 +101,15 @@ const getNeighborsOf = ([x, y]) => {
 
 const getLivingNeighbors = (cell, gameState) => {
     const neighbours = getNeighborsOf(cell);
-    const fn_IsAlive = (cellAdjacent) => contains.bind(gameState, cellAdjacent);
+    const fn_IsAlive = (cellAdjacent) => contains.call(gameState, cellAdjacent);
+   
     return neighbours.filter(fn_IsAlive);
 };
 
 const willBeAlive = (cell, gameState) => {
     const livingNeighbours = getLivingNeighbors(cell, gameState);
     const livingNeighboursCount = livingNeighbours.length;
-    console.log(`livingNeighboursCount=${livingNeighboursCount}`);
+   
     if (livingNeighboursCount === 3)
         return true;
     const isAlive = contains.call(gameState, cell);
@@ -111,14 +128,13 @@ const calculateNext = (gameState) => {
     const gameStateNew = [];
     const rowCount = topRightNew[1] - bottomLeftNew[1] + 1;
     const columnCount = topRightNew[0] - bottomLeftNew[0] + 1;
-    for (rowNumber = 0; rowNumber <= rowCount - 1; rowNumber++)
-        for (columnNumber = 0; columnNumber <= columnCount - 1; columnNumber++) {          
+    for (let rowNumber = 0; rowNumber <= rowCount - 1; rowNumber++)
+        for (let columnNumber = 0; columnNumber <= columnCount - 1; columnNumber++) {          
             const cellToTest = [bottomLeftNew[0] + columnNumber, bottomLeftNew[1] + rowNumber];
             const willBeAlive2 = willBeAlive(cellToTest, gameState);
-            console.log(`rowNumber:${rowNumber}, columnNumber:${columnNumber}, willbeAlive:${willBeAlive2}`)
+       
             if (willBeAlive2 === true) {
-                console.log(`cell pushed.`)
-                gameStateNew.push(cellToTest);
+                 gameStateNew.push(cellToTest);
             }
                 
         }
@@ -138,8 +154,10 @@ const iterate = (gameState, iterations) => {
 
 const main = (pattern, iterations) => {
     console.log('entering main...')
-    console.log(`testCorners...`)
+    
     testCorners();
+    testPrintCells();
+
     let startingPattern;
     switch (pattern){
         case 'rpentomino':
@@ -161,8 +179,11 @@ const main = (pattern, iterations) => {
     console.log(`iterationsResult[1]=${JSON.stringify(iterationsResult[1])}`);
     console.log(`iterationsResult[2]=${JSON.stringify(iterationsResult[2])}`);
     iterationsResult.forEach((gameState) => {
-        printCells(gameState);
-        printNewLine();
+        const aStr = [];
+        aStr.push(printCells(gameState));
+        aStr.push(printNewLine());
+        const strRep = aStr.join("");
+        console.log(strRep);
     })
 
 };
