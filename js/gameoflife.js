@@ -100,10 +100,8 @@ const getNeighborsOf = ([x, y]) => {
 };
 
 const getLivingNeighbors = (cell, gameState) => {
-    const neighbours = getNeighborsOf(cell);
-    const fn_IsAlive = (cellAdjacent) => contains.call(gameState, cellAdjacent);
-   
-    return neighbours.filter(fn_IsAlive);
+    const neighbours = getNeighborsOf(cell);      
+    return neighbours.filter(contains.bind(gameState));
 };
 
 const willBeAlive = (cell, gameState) => {
@@ -153,10 +151,12 @@ const iterate = (gameState, iterations) => {
 };
 
 const main = (pattern, iterations) => {
-    console.log('entering main...')
+    
     
     testCorners();
     testPrintCells();
+
+    console.log('entering main...')
 
     let startingPattern;
     switch (pattern){
@@ -175,9 +175,6 @@ const main = (pattern, iterations) => {
     };
     const printNewLine = () => '\n';
     const iterationsResult = iterate(startingPattern, iterations);
-    console.log(`iterationsResult[0]=${JSON.stringify(iterationsResult[0])}`);
-    console.log(`iterationsResult[1]=${JSON.stringify(iterationsResult[1])}`);
-    console.log(`iterationsResult[2]=${JSON.stringify(iterationsResult[2])}`);
     iterationsResult.forEach((gameState) => {
         const aStr = [];
         aStr.push(printCells(gameState));
